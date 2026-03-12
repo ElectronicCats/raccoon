@@ -581,18 +581,17 @@ void RADIO_IRQHandler(void) {
 
 void test_tx(void) {
     const char * msg = "abcdefghijklmnopqrstuvwxyz";
-    uint8_t buffer[50];
-    packet_t *packet = (packet_t*) buffer;
-    packet->tag = TAG_MSG_LOG;
-    packet->msg.timestamp = timer_get_timestamp();
-    packet->length = 4 + strlen( msg );
-    strcpy((char*)packet->msg.data.value, msg);
+    packet_t packet;
+    packet.tag = TAG_MSG_LOG;
+    packet.msg.timestamp = timer_get_timestamp();
+    packet.length = 4 + strlen( msg );
+    strcpy((char*)&packet.msg.data.value, msg);
     while (1) {
 #ifdef DEBUG
         static uint32_t i=0;
         printf("0x%08x\n", i++);
 #endif
-        transport_write((uint8_t*)packet, packet->length + 3);
+        transport_write((uint8_t*)&packet, packet.length + 3);
     }
 }
 
